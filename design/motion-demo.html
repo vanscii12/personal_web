@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@300;400&display=swap');
+
+    :root {
+      --bg-linen: #F0EBE3;
+      --fg-charcoal: #2C2C2C;
+      --fg-muted: #8A8378;
+      --accent-sage: #8B9A7B;
+      --accent-sage-light: rgba(139,154,123,0.12);
+      --border-warm: #DDD6CC;
+      --photo-border: #F7F3EE;
+      --ease-gentle: cubic-bezier(0.25, 0.1, 0.25, 1);
+      --ease-out-soft: cubic-bezier(0, 0, 0.2, 1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      background: var(--bg-linen);
+      color: var(--fg-charcoal);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* Custom cursor */
+    .cursor-dot {
+      position: fixed;
+      width: 12px;
+      height: 12px;
+      border: 1.5px solid var(--fg-charcoal);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: background 0.2s, transform 0.2s var(--ease-gentle);
+    }
+    .cursor-dot.hovering {
+      background: var(--fg-charcoal);
+      transform: translate(-50%, -50%) scale(1.3);
+    }
+
+    /* Fade-up animation */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s var(--ease-out-soft), transform 0.6s var(--ease-out-soft);
+    }
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Slide-in from left */
+    .slide-left {
+      opacity: 0;
+      transform: translateX(-20px);
+      transition: opacity 0.5s var(--ease-out-soft), transform 0.5s var(--ease-out-soft);
+    }
+    .slide-left.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* Scale-fade for photos */
+    .scale-fade {
+      opacity: 0;
+      transform: scale(0.97) translateY(15px);
+      transition: opacity 0.5s var(--ease-out-soft), transform 0.5s var(--ease-out-soft);
+    }
+    .scale-fade.visible {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+
+    /* Line grow */
+    .line-grow {
+      width: 0%;
+      transition: width 0.6s var(--ease-out-soft);
+    }
+    .line-grow.visible {
+      width: 100%;
+    }
+
+    /* Side nav */
+    .side-nav {
+      position: fixed;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 48px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 40px;
+      z-index: 100;
+    }
+    .side-nav a {
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: lowercase;
+      color: var(--fg-muted);
+      text-decoration: none;
+      opacity: 0.5;
+      transition: opacity 0.2s, transform 0.2s var(--ease-gentle);
+    }
+    .side-nav a:hover {
+      opacity: 1;
+      transform: translateX(4px);
+    }
+    .side-nav a.active {
+      opacity: 1;
+      color: var(--fg-charcoal);
+    }
+
+    /* Photo card */
+    .photo-card {
+      border-radius: 6px;
+      overflow: hidden;
+      border: 6px solid var(--photo-border);
+      background: var(--photo-border);
+      transition: transform 0.3s var(--ease-gentle), box-shadow 0.3s var(--ease-gentle), border-color 0.3s;
+      position: relative;
+    }
+    .photo-card:hover {
+      transform: scale(1.03);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+      border-color: var(--accent-sage);
+    }
+    .photo-card .caption-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 12px;
+      background: linear-gradient(transparent, rgba(44,44,44,0.7));
+      color: white;
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 13px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.25s, transform 0.25s var(--ease-gentle);
+    }
+    .photo-card:hover .caption-overlay {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Journal row */
+    .journal-row {
+      display: flex;
+      align-items: center;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-warm);
+      transition: background 0.2s;
+      gap: 20px;
+    }
+    .journal-row:hover {
+      background: var(--accent-sage-light);
+    }
+
+    /* Tag pill */
+    .tag-pill {
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      border: 1px solid var(--border-warm);
+      color: var(--fg-muted);
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+    }
+    .tag-pill:hover {
+      background: var(--accent-sage);
+      color: var(--photo-border);
+      border-color: var(--accent-sage);
+    }
+
+    /* Lightbox */
+    .lightbox-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(240,235,227,0.92);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .lightbox-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .lightbox-overlay .lightbox-photo {
+      width: 500px;
+      max-width: 80vw;
+      border-radius: 6px;
+      border: 8px solid var(--photo-border);
+      transform: scale(0.8);
+      transition: transform 0.4s var(--ease-out-soft);
+    }
+    .lightbox-overlay.open .lightbox-photo {
+      transform: scale(1);
+    }
+    .lightbox-overlay .lightbox-caption {
+      margin-top: 16px;
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      color: var(--fg-muted);
+      font-size: 15px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.3s 0.1s, transform 0.3s 0.1s var(--ease-gentle);
+    }
+    .lightbox-overlay.open .lightbox-caption {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Section label */
+    .section-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--fg-muted);
+    }
+
+    .heading-serif {
+      font-family: 'Playfair Display', serif;
+    }
+
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .accent { color: var(--accent-sage); }
+
+    /* Now underline effect */
+    .now-word {
+      position: relative;
+      display: inline-block;
+    }
+    .now-word::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 50%;
+      width: 0;
+      height: 1px;
+      background: var(--accent-sage);
+      transition: width 0.3s var(--ease-gentle), left 0.3s var(--ease-gentle);
+    }
+    .now-section:hover .now-word::after {
+      width: 100%;
+      left: 0;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body style="background: var(--bg-linen);">
+  <!-- Custom Cursor -->
+  <div class="cursor-dot" id="cursor"></div>
+
+  <!-- Side Navigation -->
+  <nav class="side-nav slide-left" style="transition-delay: 300ms">
+    <a href="#home" class="active" data-hover>archive</a>
+    <a href="#gallery" data-hover>journal</a>
+    <a href="#journal" data-hover>about</a>
+  </nav>
+
+  <!-- Lightbox -->
+  <div class="lightbox-overlay" id="lightbox" data-hover>
+    <div class="lightbox-photo" style="background: var(--border-warm); height: 340px; display:flex; align-items:center; justify-content:center; color: var(--fg-muted); font-size: 14px;">
+      📷 Photo expands here
+    </div>
+    <div class="lightbox-caption">Roll #12 — Xinjiang, 2026</div>
+  </div>
+
+  <!-- Main Content -->
+  <main style="margin-left: 60px; padding: 60px 60px 40px;">
+
+    <!-- ===== HOMEPAGE SECTION ===== -->
+    <section id="home" style="margin-bottom: 100px;">
+      <div class="section-label fade-up" style="margin-bottom: 8px;">HOME</div>
+      <h1 class="heading-serif fade-up" style="font-size: 48px; line-height: 1.15; margin-bottom: 12px;" >
+        Collected <span class="accent">light</span>,<br>scattered <span class="accent">thoughts</span>.
+      </h1>
+      <p class="fade-up" style="color: var(--fg-muted); font-size: 15px; margin-bottom: 40px;">
+        Photography, field notes, and things worth remembering.
+      </p>
+
+      <!-- Staggered Photo Strip -->
+      <div style="display: flex; gap: 20px; align-items: flex-end; margin-bottom: 50px; flex-wrap: wrap;">
+        <div class="scale-fade" style="transition-delay: 0ms;">
+          <div class="photo-card" style="width: 180px; height: 240px; margin-top: 30px;" data-hover onclick="openLightbox()">
+            <div style="width:100%; height:100%; background: linear-gradient(135deg, #A8B09A 0%, #D4C9B8 100%);"></div>
+            <div class="caption-overlay">Kamakura, temple</div>
+          </div>
+          <p style="font-family: 'Playfair Display', serif; font-size: 12px; color: var(--fg-muted); margin-top: 8px;">Kamakura</p>
+        </div>
+        <div class="scale-fade" style="transition-delay: 80ms;">
+          <div class="photo-card" style="width: 180px; height: 270px;" data-hover onclick="openLightbox()">
+            <div style="width:100%; height:100%; background: linear-gradient(135deg, #C4A882 0%, #8A9B7A 100%);"></div>
+            <div class="caption-overlay">Hokkaido, morning</div>
+          </div>
+          <p style="font-family: 'Playfair Display', serif; font-size: 12px; color: var(--fg-muted); margin-top: 8px;">Hokkaido</p>
+        </div>
+        <div class="scale-fade" style="transition-delay: 160ms;">
+          <div class="photo-card" style="width: 180px; height: 220px; margin-top: 50px;" data-hover onclick="openLightbox()">
+            <div style="width:100%; height:100%; background: linear-gradient(135deg, #B8C4D4 0%, #D6CFC5 100%);"></div>
+            <div class="caption-overlay">Dali, old town</div>
+          </div>
+          <p style="font-family: 'Playfair Display', serif; font-size: 12px; color: var(--fg-muted); margin-top: 8px;">Dali</p>
+        </div>
+        <div class="scale-fade" style="transition-delay: 240ms;">
+          <div class="photo-card" style="width: 180px; height: 260px; margin-top: 10px;" data-hover onclick="openLightbox()">
+            <div style="width:100%; height:100%; background: linear-gradient(135deg, #D4C4A8 0%, #A89880 100%);"></div>
+            <div class="caption-overlay">Xinjiang, road</div>
+          </div>
+          <p style="font-family: 'Playfair Display', serif; font-size: 12px; color: var(--fg-muted); margin-top: 8px;">Xinjiang</p>
+        </div>
+      </div>
+
+      <!-- Now section -->
+      <div class="fade-up now-section" style="transition-delay: 400ms; border-top: 1px solid var(--border-warm); padding-top: 16px;" data-hover>
+        <span style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: 16px;">now</span>
+        <p style="color: var(--fg-muted); font-size: 14px; font-style: italic; margin-top: 6px;">
+          currently — reading <span class="now-word">Borges</span>, editing rolls from <span class="now-word">Hokkaido</span>
+        </p>
+      </div>
+    </section>
+
+    <!-- Divider -->
+    <div style="margin-bottom: 60px;">
+      <div class="line-grow" style="height: 1px; background: var(--border-warm);"></div>
+    </div>
+
+    <!-- ===== GALLERY SECTION ===== -->
+    <section id="gallery" style="margin-bottom: 100px;">
+      <div class="section-label fade-up" style="margin-bottom: 4px;">archive → photo rolls</div>
+      <h2 class="heading-serif fade-up" style="font-size: 42px; margin-bottom: 16px;">Photo Rolls.</h2>
+      <div class="line-grow" style="height: 1px; background: var(--border-warm); margin-bottom: 30px;"></div>
+
+      <!-- Tags -->
+      <div class="fade-up" style="display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap;">
+        <span class="tag-pill" data-hover>All</span>
+        <span class="tag-pill" data-hover>35mm</span>
+        <span class="tag-pill" data-hover>120mm</span>
+        <span class="tag-pill" data-hover>Portra</span>
+        <span class="tag-pill" data-hover>Ektar</span>
+      </div>
+
+      <!-- Masonry Grid -->
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+        <div class="scale-fade" style="transition-delay: 0ms;">
+          <div class="photo-card" style="height: 220px;" data-hover onclick="openLightbox()">
+            <div style="width:100%; height:100%; background: linear-gradient(180deg, #B4C4A8 0%, #8A9870 100%);"></div>
+            <div class="caption-overlay">Roll #08 — Hokkaido</div>
+          </div>
+        </div>
+        <div class="scale-fade" style="transition-delay: 80ms;">
+          <div class="photo-card" style="height: 280px;" data-hover onclick="openLightbox()">
+            <div style="width:100%; height:100%; background: linear-gradient(180deg, #C8B8A0 0%, #A09080 100%);"></div>
+            <div class="caption-overlay">Roll #09 — Kamakura</div>
+          </div>
+        </div>
+        <div class="scale-fade" style="transition-delay: 160ms;">
+          <div class="photo-card" style="height: 200px;" data-hover onclick="openLightbox()">
+            <div style="width:100%; height:100%; background: linear-gradient(180deg, #A8B8C8 0%, #8898A8 100%);"></div>
+            <div class="caption-overlay">Roll #10 — Dali</div>
+          </div>
+        </div>
+        <div class="scale-fade" style="transition-delay: 240ms;">
+          <div class="photo-card" style="height: 260px;" data-hover onclick="openLightbox()">
+            <div style="width:100%; height:100%; background: linear-gradient(180deg, #D0C0A8 0%, #B0A088 100%);"></div>
+            <div class="caption-overlay">Roll #11 — Santa Barbara</div>
+          </div>
+        </div>
+        <div class="scale-fade" style="transition-delay: 320ms;">
+          <div class="photo-card" style="height: 180px;" data-hover onclick="openLightbox()">
+            <div style="width:100%; height:100%; background: linear-gradient(180deg, #C4D0C0 0%, #98A890 100%);"></div>
+            <div class="caption-overlay">Roll #12 — Xinjiang</div>
+          </div>
+        </div>
+        <div class="scale-fade" style="transition-delay: 400ms;">
+          <div class="photo-card" style="height: 240px;" data-hover onclick="openLightbox()">
+            <div style="width:100%; height:100%; background: linear-gradient(180deg, #B8A898 0%, #988878 100%);"></div>
+            <div class="caption-overlay">Roll #13 — Kyoto</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="fade-up" style="text-align: center; margin-top: 30px; color: var(--fg-muted); font-size: 14px;">
+        <span data-hover style="cursor:pointer; opacity:0.4">←</span>
+        &nbsp; <span class="font-mono">1 / 3</span> &nbsp;
+        <span data-hover style="cursor:pointer">→</span>
+      </div>
+    </section>
+
+    <!-- Divider -->
+    <div style="margin-bottom: 60px;">
+      <div class="line-grow" style="height: 1px; background: var(--border-warm);"></div>
+    </div>
+
+    <!-- ===== JOURNAL SECTION ===== -->
+    <section id="journal" style="margin-bottom: 60px;">
+      <div class="section-label fade-up" style="margin-bottom: 4px;">NOTES</div>
+      <h2 class="heading-serif fade-up" style="font-size: 42px; margin-bottom: 16px;">Journal.</h2>
+      <div class="line-grow" style="height: 1px; background: var(--border-warm); margin-bottom: 20px;"></div>
+
+      <!-- Journal Entries -->
+      <div class="journal-row slide-left" style="transition-delay: 0ms;" data-hover>
+        <span class="font-mono" style="font-size: 13px; color: var(--fg-muted); min-width: 100px;">2026.10.08</span>
+        <div style="width: 1px; height: 30px; background: var(--border-warm);"></div>
+        <div style="flex: 1;">
+          <div class="heading-serif" style="font-size: 18px;">Notes on Maxwell's equations</div>
+          <div style="font-size: 13px; color: var(--fg-muted); margin-top: 2px;">Deriving the wave equation from curl relations...</div>
+        </div>
+        <span class="tag-pill" data-hover>physics</span>
+      </div>
+
+      <div class="journal-row slide-left" style="transition-delay: 60ms;" data-hover>
+        <span class="font-mono" style="font-size: 13px; color: var(--fg-muted); min-width: 100px;">2026.10.05</span>
+        <div style="width: 1px; height: 30px; background: var(--border-warm);"></div>
+        <div style="flex: 1;">
+          <div class="heading-serif" style="font-size: 18px;">Scanning Portra 400 at home</div>
+          <div style="font-size: 13px; color: var(--fg-muted); margin-top: 2px;">A workflow for consistent colors with a flatbed scanner...</div>
+        </div>
+        <span class="tag-pill" data-hover>photography</span>
+      </div>
+
+      <div class="journal-row slide-left" style="transition-delay: 120ms;" data-hover>
+        <span class="font-mono" style="font-size: 13px; color: var(--fg-muted); min-width: 100px;">2026.09.28</span>
+        <div style="width: 1px; height: 30px; background: var(--border-warm);"></div>
+        <div style="flex: 1;">
+          <div class="heading-serif" style="font-size: 18px;">Reading: Borges, <em>The Garden of Forking Paths</em></div>
+          <div style="font-size: 13px; color: var(--fg-muted); margin-top: 2px;">On labyrinths, time as branching, and infinite narratives...</div>
+        </div>
+        <span class="tag-pill" data-hover>reading</span>
+      </div>
+
+      <div class="journal-row slide-left" style="transition-delay: 180ms;" data-hover>
+        <span class="font-mono" style="font-size: 13px; color: var(--fg-muted); min-width: 100px;">2026.09.22</span>
+        <div style="width: 1px; height: 30px; background: var(--border-warm);"></div>
+        <div style="flex: 1;">
+          <div class="heading-serif" style="font-size: 18px;">Quiet days in Dali</div>
+          <div style="font-size: 13px; color: var(--fg-muted); margin-top: 2px;">Walking the old town, Erhai Lake in autumn light...</div>
+        </div>
+        <span class="tag-pill" data-hover>travel</span>
+      </div>
+
+      <div class="journal-row slide-left" style="transition-delay: 240ms;" data-hover>
+        <span class="font-mono" style="font-size: 13px; color: var(--fg-muted); min-width: 100px;">2026.09.15</span>
+        <div style="width: 1px; height: 30px; background: var(--border-warm);"></div>
+        <div style="flex: 1;">
+          <div class="heading-serif" style="font-size: 18px;">Refactoring the archive system</div>
+          <div style="font-size: 13px; color: var(--fg-muted); margin-top: 2px;">Moving from tags to a date-based roll structure...</div>
+        </div>
+        <span class="tag-pill" data-hover>dev</span>
+      </div>
+    </section>
+
+    <p style="text-align: center; color: var(--fg-muted); font-size: 12px; font-style: italic; padding-bottom: 30px;">
+      ↑ Scroll up & hover elements to see all motion effects in action
+    </p>
+  </main>
+
+  <script>
+    // Custom cursor
+    const cursor = document.getElementById('cursor');
+    const hoverElements = document.querySelectorAll('[data-hover]');
+    
+    document.addEventListener('mousemove', (e) => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top = e.clientY + 'px';
+    });
+
+    hoverElements.forEach(el => {
+      el.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
+      el.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
+    });
+
+    // Intersection Observer for scroll animations
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.fade-up, .slide-left, .scale-fade, .line-grow').forEach(el => {
+      observer.observe(el);
+    });
+
+    // Trigger side nav animation
+    setTimeout(() => {
+      document.querySelector('.side-nav').classList.add('visible');
+    }, 300);
+
+    // Lightbox
+    const lightbox = document.getElementById('lightbox');
+    function openLightbox() {
+      lightbox.classList.add('open');
+    }
+    lightbox.addEventListener('click', () => {
+      lightbox.classList.remove('open');
+    });
+
+    // Side nav active state
+    document.querySelectorAll('.side-nav a').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        document.querySelectorAll('.side-nav a').forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+        const target = document.querySelector(link.getAttribute('href'));
+        if (target) target.scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+  </script>
+</body>
+</html>

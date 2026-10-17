@@ -1,123 +1,143 @@
 import { Link } from 'react-router'
-import { motion } from 'motion/react'
+import { useEffect, useRef } from 'react'
 
-const categories = [
+const featuredPhotos = [
   {
-    id: 'travel',
-    title: 'Destinations',
-    image: '/img-webp/travel/dali/1.webp',
-    tags: ['Travel', 'Destinations']
+    src: '/img-webp/film/Roll1/Roll1_139107JW204636-R1-E001.webp',
+    caption: 'Kamakura, temple',
+    label: 'Kamakura',
+    height: 240,
+    offset: 30,
   },
   {
-    id: 'film',
-    title: 'Film Rolls',
-    image: '/img-webp/film/Roll1/Roll1_139107JW204636-R1-E001.webp',
-    tags: ['Film', 'Rolls']
+    src: '/img-webp/travel/dali/1.webp',
+    caption: 'Dali, old town',
+    label: 'Dali',
+    height: 270,
+    offset: 0,
   },
   {
-    id: 'daily',
-    title: 'Santa Barbara Daily',
-    image: '/img-webp/us-daily/2021/9-23/1-1.webp',
-    tags: ['Timeline', 'Daily']
-  }
+    src: '/img-webp/us-daily/2021/9-23/1-1.webp',
+    caption: 'Santa Barbara, daily',
+    label: 'Santa Barbara',
+    height: 220,
+    offset: 50,
+  },
+  {
+    src: '/img-webp/film/2025-xinjiang/000158310001.webp',
+    caption: 'Xinjiang, road',
+    label: 'Xinjiang',
+    height: 260,
+    offset: 10,
+  },
 ]
 
-export function Home() {
-  return (
-    <div className="pt-8 flex flex-col items-center">
-      <div className="w-full max-w-xl">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-        >
-          <p className="text-xs uppercase tracking-widest text-[#8C8A82] mb-4">Home Base</p>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-light tracking-tighter mb-6 font-serif">
-            A quiet archive of <span className="text-[#8C8A82]">images</span>, notes, and <span className="text-[#55544E]">personal records</span>.
-          </h1>
-          <p className="text-lg font-light text-[#55544E] mb-8">
-            A personal website for photography, study notes, and selected fragments of daily life. Built as a calm, browsable archive rather than a stream of updates.
-          </p>
-          <div className="flex flex-wrap gap-3">
-            <span className="px-4 py-2 rounded-full bg-white/60 border border-black/5 text-[#55544E] text-sm">Photo Archive</span>
-            <span className="px-4 py-2 rounded-full bg-white/60 border border-black/5 text-[#55544E] text-sm">Reading Notes</span>
-            <span className="px-4 py-2 rounded-full bg-white/60 border border-black/5 text-[#55544E] text-sm">Physics</span>
-            <span className="px-4 py-2 rounded-full bg-white/60 border border-black/5 text-[#55544E] text-sm">Travel</span>
-          </div>
-        </motion.div>
+function useScrollAnimator() {
+  const containerRef = useRef(null)
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-24">
-          {categories.map((cat, i) => (
-            <motion.div 
-              key={cat.id}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: i * 0.15 }}
-            >
-              <Link to={`/gallery/${cat.id}`} className="group block">
-                <div className="overflow-hidden bg-[#D1CFC7] aspect-[3/4] mb-4 rounded-xl">
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible')
+          }
+        })
+      },
+      { threshold: 0.15 }
+    )
+
+    el.querySelectorAll('.fade-up, .slide-left, .scale-fade, .line-grow').forEach(child => {
+      observer.observe(child)
+    })
+
+    return () => observer.disconnect()
+  }, [])
+
+  return containerRef
+}
+
+export function Home() {
+  const containerRef = useScrollAnimator()
+
+  return (
+    <div ref={containerRef}>
+      {/* Hero section */}
+      <section style={{ marginBottom: 100 }}>
+        <div className="section-label fade-up" style={{ marginBottom: 8 }}>HOME</div>
+        <h1
+          className="fade-up"
+          style={{
+            fontFamily: 'var(--font-heading)',
+            fontSize: 48,
+            lineHeight: 1.15,
+            marginBottom: 12,
+            fontWeight: 400,
+          }}
+        >
+          Collected <span style={{ color: 'var(--color-accent-sage)' }}>light</span>,
+          <br />
+          scattered <span style={{ color: 'var(--color-accent-sage)' }}>thoughts</span>.
+        </h1>
+        <p className="fade-up" style={{ color: 'var(--color-fg-muted)', fontSize: 15, marginBottom: 40 }}>
+          Photography, field notes, and things worth remembering.
+        </p>
+
+        {/* Staggered Photo Strip */}
+        <div style={{ display: 'flex', gap: 20, alignItems: 'flex-end', marginBottom: 50, flexWrap: 'wrap' }}>
+          {featuredPhotos.map((photo, i) => (
+            <div key={photo.label} className="scale-fade" style={{ transitionDelay: `${i * 80}ms` }}>
+              <Link to="/gallery" data-hover>
+                <div
+                  className="photo-card"
+                  style={{ width: 180, height: photo.height, marginTop: photo.offset }}
+                >
                   <img
-                    src={cat.image}
-                    alt={cat.title}
-                    className="w-full h-full object-cover grayscale-[30%] group-hover:scale-105 group-hover:grayscale-0 transition-all duration-[1.5s]"
+                    src={photo.src}
+                    alt={photo.caption}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                    loading="lazy"
                   />
+                  <div className="caption-overlay">{photo.caption}</div>
                 </div>
-                <h2 className="text-xl font-light tracking-tight group-hover:italic transition-all font-serif">
-                  {cat.title}
-                </h2>
               </Link>
-            </motion.div>
+              <p style={{
+                fontFamily: 'var(--font-heading)',
+                fontSize: 12,
+                color: 'var(--color-fg-muted)',
+                marginTop: 8,
+              }}>
+                {photo.label}
+              </p>
+            </div>
           ))}
         </div>
 
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.5 }}
-          className="mt-20"
-        >
-          <div className="p-8 bg-white/75 rounded-[28px] border border-white/60">
-            <p className="text-xs uppercase tracking-widest text-[#8C8A82] mb-4">Current</p>
-            <h2 className="text-2xl font-light tracking-tight mb-4 font-serif">Reading, shooting, and building quietly</h2>
-            <p className="text-[#55544E] mb-6">
-              Recently focusing on electrodynamics notes, small travel archives, and refining this site.
-            </p>
-            <div className="flex flex-wrap gap-3">
-              <span className="px-3 py-1.5 rounded-full bg-white/60 border border-black/5 text-[#55544E] text-xs">Reading Maxwell</span>
-              <span className="px-3 py-1.5 rounded-full bg-white/60 border border-black/5 text-[#55544E] text-xs">Editing photos</span>
-            </div>
-          </div>
-        </motion.div>
-
-        <div className="grid grid-cols-2 gap-8 mt-16">
-          <div>
-            <p className="text-xs uppercase tracking-widest text-[#8C8A82] mb-4">Recent Photos</p>
-            <ul className="space-y-3">
-              <li className="flex items-center gap-2">
-                <span className="w-1 h-1 rounded-full bg-[#8C8A82]" />
-                <Link to="/gallery/travel" className="text-sm hover:underline">Dali</Link>
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="w-1 h-1 rounded-full bg-[#8C8A82]" />
-                <Link to="/gallery/daily" className="text-sm hover:underline">Santa Barbara Daily</Link>
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="w-1 h-1 rounded-full bg-[#8C8A82]" />
-                <Link to="/gallery/film" className="text-sm hover:underline">Film Rolls</Link>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <p className="text-xs uppercase tracking-widest text-[#8C8A82] mb-4">Recent Notes</p>
-            <ul className="space-y-3">
-              <li className="flex items-center gap-2">
-                <span className="w-1 h-1 rounded-full bg-[#8C8A82]" />
-                <Link to="/notes/maxwell-equation" className="text-sm hover:underline">Maxwell's Equation</Link>
-              </li>
-            </ul>
-          </div>
+        {/* Divider */}
+        <div style={{ marginBottom: 16 }}>
+          <div className="line-grow" style={{ height: 1, background: 'var(--color-border-warm)' }} />
         </div>
-      </div>
+
+        {/* Now section */}
+        <div className="fade-up now-section" data-hover style={{ transitionDelay: '400ms', paddingTop: 16 }}>
+          <span style={{
+            fontFamily: 'var(--font-heading)',
+            fontWeight: 700,
+            fontSize: 16,
+          }}>now</span>
+          <p style={{
+            color: 'var(--color-fg-muted)',
+            fontSize: 14,
+            fontStyle: 'italic',
+            marginTop: 6,
+          }}>
+            currently — reading <span className="now-word">Borges</span>, editing rolls from <span className="now-word">Hokkaido</span>
+          </p>
+        </div>
+      </section>
     </div>
   )
 }

@@ -1,11 +1,12 @@
 import { Link, useLocation, Outlet } from 'react-router'
-import { motion } from 'motion/react'
+import { motion, AnimatePresence } from 'motion/react'
 import { cn } from '../lib/utils'
+import { CustomCursor } from './CustomCursor'
 
 const navLinks = [
-  { name: 'Home', path: '/' },
-  { name: 'Gallery', path: '/gallery' },
-  { name: 'Notes', path: '/notes' },
+  { name: 'archive', path: '/gallery' },
+  { name: 'journal', path: '/notes' },
+  { name: 'about', path: '/about' },
 ]
 
 export function Layout() {
@@ -17,38 +18,52 @@ export function Layout() {
   }
 
   return (
-    <div className="min-h-screen bg-[#EBE9E1] text-[#1A1A1A] font-sans selection:bg-[#1A1A1A] selection:text-[#EBE9E1] relative overflow-x-hidden">
-      <div className="fixed top-8 left-8 z-40">
-        <Link to="/" className="text-2xl font-light tracking-tighter hover:italic transition-all font-serif">
-          VanScii©
+    <div className="min-h-screen relative overflow-x-hidden">
+      <CustomCursor />
+
+      {/* Side Navigation — vertical text labels */}
+      <nav className="side-nav fixed left-0 top-0 h-full w-12 flex flex-col justify-center items-center gap-10 z-50">
+        {navLinks.map((link, i) => (
+          <Link
+            key={link.name}
+            to={link.path}
+            data-hover
+            className={cn(
+              isActive(link.path) && 'active'
+            )}
+            style={{ transitionDelay: `${300 + i * 80}ms` }}
+          >
+            {link.name}
+          </Link>
+        ))}
+      </nav>
+
+      {/* Branding — top left */}
+      <div className="fixed top-8 left-16 z-40">
+        <Link
+          to="/"
+          data-hover
+          className="font-heading text-lg tracking-tight hover:opacity-60 transition-opacity"
+          style={{ fontFamily: "var(--font-heading)" }}
+        >
+          VanScii
         </Link>
       </div>
 
-      <div className="fixed bottom-8 md:bottom-12 left-1/2 -translate-x-1/2 z-50 w-[90%] md:w-auto flex justify-center">
-        <nav className="flex items-center gap-1 p-1.5 bg-[#1A1A1A]/95 backdrop-blur-xl rounded-full shadow-2xl shadow-black/20 border border-white/10 w-full md:w-auto justify-between md:justify-center">
-          {navLinks.map((link) => (
-            <Link
-              key={link.name}
-              to={link.path}
-              className="relative px-6 py-3 rounded-full text-xs uppercase tracking-widest transition-colors duration-300 w-full md:w-auto text-center"
-            >
-              {isActive(link.path) && (
-                <motion.div
-                  layoutId="active-nav-pill"
-                  className="absolute inset-0 bg-[#EBE9E1] rounded-full shadow-sm"
-                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                />
-              )}
-              <span className={cn("relative z-10 font-medium", isActive(link.path) ? "text-[#1A1A1A]" : "text-[#A1A1AA] hover:text-white")}>
-                {link.name}
-              </span>
-            </Link>
-          ))}
-        </nav>
-      </div>
-
-      <main className="pt-32 pb-48 px-6 md:px-12 min-h-screen max-w-5xl mx-auto">
-        <Outlet />
+      {/* Main content area */}
+      <main className="ml-[60px] min-h-screen">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="px-8 md:px-16 pt-24 pb-16"
+          >
+            <Outlet />
+          </motion.div>
+        </AnimatePresence>
       </main>
     </div>
   )

@@ -1,12 +1,11 @@
 import { useParams, Link } from 'react-router'
-import { ArrowLeft } from 'lucide-react'
-import { motion } from 'motion/react'
 import { useEffect, useRef } from 'react'
 import { getNote } from '../notes/index.js'
 
 export function NotesDetail() {
   const { noteId } = useParams()
   const contentRef = useRef(null)
+  const containerRef = useRef(null)
   const note = getNote(noteId)
 
   useEffect(() => {
@@ -38,9 +37,25 @@ export function NotesDetail() {
     loadMathJax()
   }, [noteId])
 
+  // Scroll animations
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) entry.target.classList.add('visible')
+        })
+      },
+      { threshold: 0.15 }
+    )
+    el.querySelectorAll('.fade-up, .slide-left').forEach(child => observer.observe(child))
+    return () => observer.disconnect()
+  }, [noteId])
+
   if (!note) {
     return (
-      <div className="pt-24 text-[#8C8A82] font-light">
+      <div style={{ paddingTop: 96, color: 'var(--color-fg-muted)', fontWeight: 300 }}>
         Note not found
       </div>
     )
@@ -56,7 +71,7 @@ export function NotesDetail() {
     const pushDisplayMath = () => {
       const expression = mathBuffer.join(' ').trim()
       elements.push(
-        <div key={key++} className="my-8 text-center">
+        <div key={key++} style={{ margin: '32px 0', textAlign: 'center' }}>
           {`$$ ${expression} $$`}
         </div>
       )
@@ -89,7 +104,13 @@ export function NotesDetail() {
 
       if (trimmed.startsWith('### ')) {
         elements.push(
-          <h3 key={key++} className="text-xl md:text-2xl font-serif text-[#2C2B27] mt-8 mb-4">
+          <h3 key={key++} style={{
+            fontFamily: 'var(--font-heading)',
+            fontSize: '1.25rem',
+            color: 'var(--color-fg-charcoal)',
+            marginTop: 32,
+            marginBottom: 16,
+          }}>
             {trimmed.slice(4).trim()}
           </h3>
         )
@@ -98,7 +119,13 @@ export function NotesDetail() {
 
       if (trimmed.startsWith('## ')) {
         elements.push(
-          <h2 key={key++} className="text-2xl md:text-3xl font-serif text-[#2C2B27] mt-10 mb-5">
+          <h2 key={key++} style={{
+            fontFamily: 'var(--font-heading)',
+            fontSize: '1.5rem',
+            color: 'var(--color-fg-charcoal)',
+            marginTop: 40,
+            marginBottom: 20,
+          }}>
             {trimmed.slice(3).trim()}
           </h2>
         )
@@ -107,7 +134,13 @@ export function NotesDetail() {
 
       if (trimmed.startsWith('# ')) {
         elements.push(
-          <h1 key={key++} className="text-3xl md:text-4xl font-serif text-text-primary mt-10 mb-6">
+          <h1 key={key++} style={{
+            fontFamily: 'var(--font-heading)',
+            fontSize: '1.875rem',
+            color: 'var(--color-fg-charcoal)',
+            marginTop: 40,
+            marginBottom: 24,
+          }}>
             {trimmed.slice(2).trim()}
           </h1>
         )
@@ -116,7 +149,7 @@ export function NotesDetail() {
 
       if (trimmed.startsWith('$$') && trimmed.endsWith('$$')) {
         elements.push(
-          <div key={key++} className="my-8 text-center">
+          <div key={key++} style={{ margin: '32px 0', textAlign: 'center' }}>
             {trimmed}
           </div>
         )
@@ -124,11 +157,11 @@ export function NotesDetail() {
       }
 
       if (trimmed.startsWith('$') && trimmed.endsWith('$')) {
-        elements.push(<span key={key++} className="mx-1">{trimmed}</span>)
+        elements.push(<span key={key++} style={{ margin: '0 4px' }}>{trimmed}</span>)
         continue
       }
 
-      elements.push(<p key={key++} className="mb-4">{trimmed}</p>)
+      elements.push(<p key={key++} style={{ marginBottom: 16 }}>{trimmed}</p>)
     }
 
     if (inDisplayMath) {
@@ -139,34 +172,51 @@ export function NotesDetail() {
   }
 
   return (
-    <div className="pt-8 pb-24">
-      <header className="mb-12">
-        <Link to="/notes" className="inline-flex items-center gap-3 text-xs uppercase tracking-widest text-[#8C8A82] hover:text-[#1A1A1A] transition-colors group mb-8">
-          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> 
-          Return to Notes
-        </Link>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+    <div ref={containerRef}>
+      <header style={{ marginBottom: 48 }}>
+        <Link
+          to="/notes"
+          data-hover
+          className="section-label"
+          style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginBottom: 24, textDecoration: 'none' }}
         >
-          <span className="text-xs uppercase tracking-widest text-[#8C8A82]">{note.category}</span>
-          <h1 className="text-4xl md:text-6xl font-light tracking-tight mt-2 mb-4 font-serif">
+          ← Return to Journal
+        </Link>
+        <div className="fade-up">
+          <span className="section-label">{note.category}</span>
+          <h1 style={{
+            fontFamily: 'var(--font-heading)',
+            fontSize: 36,
+            fontWeight: 400,
+            marginTop: 8,
+            marginBottom: 8,
+          }}>
             {note.title}
           </h1>
-          <p className="text-sm text-[#8C8A82]">{note.date}</p>
-        </motion.div>
+          <p style={{
+            fontFamily: 'var(--font-mono)',
+            fontSize: 13,
+            color: 'var(--color-fg-muted)',
+          }}>
+            {note.date}
+          </p>
+        </div>
       </header>
 
-      <motion.div 
+      <div className="line-grow" style={{ height: 1, background: 'var(--color-border-warm)', marginBottom: 30 }} />
+
+      <div
         ref={contentRef}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.2 }}
-        className="max-w-3xl text-lg leading-relaxed text-[#55544E]"
+        className="fade-up"
+        style={{
+          maxWidth: 720,
+          fontSize: '1.125rem',
+          lineHeight: 1.75,
+          color: 'var(--color-fg-muted)',
+        }}
       >
         {renderContent(note.content)}
-      </motion.div>
+      </div>
     </div>
   )
 }

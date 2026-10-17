@@ -1,91 +1,128 @@
 import { Link } from 'react-router'
-import { motion } from 'motion/react'
+import { useEffect, useRef } from 'react'
+import { getCategoryData } from '../gallery'
 
-const categories = [
-  {
-    id: 'travel',
-    title: 'Destinations',
-    subtitle: "Travel sets organized by destination, with film and digital work grouped together.",
-    image: '/img-webp/travel/dali/1.webp',
-    tags: ['Travel', 'Destinations'],
-    count: '1 destination'
-  },
-  {
-    id: 'film',
-    title: 'Film Rolls',
-    subtitle: "Analog roll scans grouped into a dedicated film archive.",
-    image: '/img-webp/film/Roll1/Roll1_139107JW204636-R1-E001.webp',
-    tags: ['Film', 'Rolls'],
-    count: '2 rolls'
-  },
-  {
-    id: 'daily',
-    title: 'Santa Barbara Daily',
-    subtitle: "A date-based archive for daily sequences and ongoing additions.",
-    image: '/img-webp/us-daily/2021/9-23/1-1.webp',
-    tags: ['Timeline', 'Daily'],
-    count: 'Ongoing'
-  }
+const allTags = ['All', '35mm', '120mm', 'Portra', 'Ektar', 'Travel', 'Daily']
+
+const allRolls = [
+  { id: 'travel', items: 'travel' },
+  { id: 'film', items: 'film' },
+  { id: 'daily', items: 'daily' },
 ]
 
-export function Gallery() {
-  return (
-    <div className="pt-8">
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-      >
-        <p className="text-xs uppercase tracking-widest text-[#8C8A82] mb-4">Photo Archive</p>
-        <h1 className="text-5xl md:text-7xl lg:text-8xl font-light tracking-tighter mb-6 font-serif">
-          Selected <span className="text-[#8C8A82] italic">Archives</span>.
-        </h1>
-        <p className="text-lg font-light text-[#55544E] max-w-xl mb-8">
-          A cleaner landing page for the photo work: travel destinations, film rolls, and daily sequences.
-        </p>
-        <div className="flex flex-wrap gap-3">
-          <span className="px-4 py-2 rounded-full bg-white/60 border border-black/5 text-[#55544E] text-sm">3 collections</span>
-          <span className="px-4 py-2 rounded-full bg-white/60 border border-black/5 text-[#55544E] text-sm">Travel + Film + Daily</span>
-          <span className="px-4 py-2 rounded-full bg-white/60 border border-black/5 text-[#55544E] text-sm">Static archive</span>
-        </div>
-      </motion.div>
+function useScrollAnimator() {
+  const containerRef = useRef(null)
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) entry.target.classList.add('visible')
+        })
+      },
+      { threshold: 0.15 }
+    )
+    el.querySelectorAll('.fade-up, .slide-left, .scale-fade, .line-grow').forEach(child => {
+      observer.observe(child)
+    })
+    return () => observer.disconnect()
+  }, [])
+  return containerRef
+}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
-        {categories.map((cat, i) => (
-          <motion.article 
-            key={cat.id}
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: i * 0.15 }}
-            className="group"
-          >
-            <Link to={`/gallery/${cat.id}`} className="block">
-              <div className="overflow-hidden bg-[#D1CFC7] aspect-[3/4] mb-6 rounded-2xl">
-                <img
-                  src={cat.image}
-                  alt={cat.title}
-                  className="w-full h-full object-cover grayscale-[30%] group-hover:scale-105 group-hover:grayscale-0 transition-all duration-[1.5s] ease-out"
-                />
-              </div>
-              <div className="px-2">
-                <p className="text-xs uppercase tracking-widest text-[#8C8A82] mb-2">{cat.id}</p>
-                <h2 className="text-3xl font-light tracking-tight mb-3 group-hover:italic transition-all duration-300 font-serif">
-                  {cat.title}
-                </h2>
-                <p className="text-[#55544E] text-sm leading-relaxed mb-4">
-                  {cat.subtitle}
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {cat.tags.map(tag => (
-                    <span key={tag} className="px-3 py-1 rounded-full bg-white/60 border border-black/5 text-[#55544E] text-xs">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
+export function Gallery() {
+  const containerRef = useScrollAnimator()
+
+  // Gather all gallery items from all categories for the masonry grid
+  const allItems = []
+  allRolls.forEach(({ id }) => {
+    const cat = getCategoryData(id)
+    if (cat) {
+      cat.items.forEach(item => {
+        allItems.push({ ...item, categoryId: id })
+      })
+    }
+  })
+
+  return (
+    <div ref={containerRef}>
+      <div className="section-label fade-up" style={{ marginBottom: 4 }}>archive → photo rolls</div>
+      <h1
+        className="fade-up"
+        style={{
+          fontFamily: 'var(--font-heading)',
+          fontSize: 42,
+          marginBottom: 16,
+          fontWeight: 400,
+        }}
+      >
+        Photo Rolls.
+      </h1>
+      <div className="line-grow" style={{ height: 1, background: 'var(--color-border-warm)', marginBottom: 30 }} />
+
+      {/* Tags */}
+      <div className="fade-up" style={{ display: 'flex', gap: 10, marginBottom: 30, flexWrap: 'wrap' }}>
+        {allTags.map(tag => (
+          <span key={tag} className="tag-pill" data-hover>{tag}</span>
+        ))}
+      </div>
+
+      {/* Masonry Grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+        {allItems.map((item, i) => (
+          <div key={`${item.categoryId}-${item.id}`} className="scale-fade" style={{ transitionDelay: `${i * 80}ms` }}>
+            <Link to={`/gallery/${item.categoryId}/${item.id}`} data-hover>
+              <div className="photo-card" style={{ height: [220, 280, 200, 260, 180, 240][i % 6] }}>
+                {item.coverImage ? (
+                  <img
+                    src={item.coverImage}
+                    alt={item.title}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                    loading="lazy"
+                  />
+                ) : (
+                  <div style={{
+                    width: '100%',
+                    height: '100%',
+                    background: 'linear-gradient(180deg, var(--color-border-warm) 0%, var(--color-bg-linen) 100%)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'var(--color-fg-muted)',
+                    fontFamily: 'var(--font-heading)',
+                    fontSize: 24,
+                  }}>
+                    {item.title.charAt(0)}
+                  </div>
+                )}
+                <div className="caption-overlay">{item.title}{item.date ? ` — ${item.date}` : ''}</div>
               </div>
             </Link>
-          </motion.article>
+          </div>
         ))}
+      </div>
+
+      {/* Category links */}
+      <div style={{ marginTop: 50 }}>
+        <div className="line-grow" style={{ height: 1, background: 'var(--color-border-warm)', marginBottom: 30 }} />
+        <div className="section-label fade-up" style={{ marginBottom: 16 }}>BROWSE BY CATEGORY</div>
+        <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+          {allRolls.map(({ id }) => {
+            const cat = getCategoryData(id)
+            return cat ? (
+              <Link
+                key={id}
+                to={`/gallery/${id}`}
+                data-hover
+                className="tag-pill fade-up"
+                style={{ fontSize: 14, padding: '8px 20px' }}
+              >
+                {cat.title}
+              </Link>
+            ) : null
+          })}
+        </div>
       </div>
     </div>
   )

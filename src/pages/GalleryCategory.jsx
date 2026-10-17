@@ -1,89 +1,126 @@
 import { useParams, Link } from 'react-router'
-import { ArrowLeft } from 'lucide-react'
-import { motion } from 'motion/react'
+import { useEffect, useRef } from 'react'
 import { getCategoryData } from '../gallery'
+
+function useScrollAnimator() {
+  const containerRef = useRef(null)
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) entry.target.classList.add('visible')
+        })
+      },
+      { threshold: 0.15 }
+    )
+    el.querySelectorAll('.fade-up, .slide-left, .scale-fade, .line-grow').forEach(child => {
+      observer.observe(child)
+    })
+    return () => observer.disconnect()
+  }, [])
+  return containerRef
+}
 
 export function GalleryCategory() {
   const { categoryId } = useParams()
   const category = getCategoryData(categoryId)
-  
+  const containerRef = useScrollAnimator()
+
   if (!categoryId || !category) {
     return (
-      <div className="pt-24 text-[#8C8A82] font-light">
+      <div style={{ paddingTop: 96, color: 'var(--color-fg-muted)', fontWeight: 300 }}>
         Category not found
       </div>
     )
   }
-  
+
   const { title, subtitle, items } = category
 
   return (
-    <div className="pt-8">
-      <header className="mb-16">
-        <Link to="/gallery" className="inline-flex items-center gap-3 text-xs uppercase tracking-widest text-[#8C8A82] hover:text-[#1A1A1A] transition-colors group mb-8">
-          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> 
-          Return to Archives
-        </Link>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+    <div ref={containerRef}>
+      <header style={{ marginBottom: 40 }}>
+        <Link
+          to="/gallery"
+          data-hover
+          className="section-label slide-left"
+          style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginBottom: 24, textDecoration: 'none' }}
         >
-          <p className="text-xs uppercase tracking-widest text-[#8C8A82] mb-4">{categoryId} Archive</p>
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-light tracking-tighter mb-6 font-serif">
-            {title}<span className="text-[#8C8A82] italic">.</span>
-          </h1>
-          <p className="text-lg font-light text-[#55544E] max-w-xl mb-8">
-            {subtitle}
-          </p>
-          <div className="flex flex-wrap gap-3">
-            <span className="px-4 py-2 rounded-full bg-white/60 border border-black/5 text-[#55544E] text-sm">
-              {items.length} {categoryId === 'daily' ? 'dates' : 'items'}
-            </span>
-            <span className="px-4 py-2 rounded-full bg-white/60 border border-black/5 text-[#55544E] text-sm">
-              {categoryId === 'film' ? 'Analog scans' : categoryId === 'daily' ? 'Timeline' : 'Archive'}
-            </span>
-          </div>
-        </motion.div>
+          ← Return to Photo Rolls
+        </Link>
+        <div className="section-label fade-up" style={{ marginBottom: 4 }}>{categoryId} archive</div>
+        <h1
+          className="fade-up"
+          style={{
+            fontFamily: 'var(--font-heading)',
+            fontSize: 42,
+            marginBottom: 12,
+            fontWeight: 400,
+          }}
+        >
+          {title}<span style={{ color: 'var(--color-accent-sage)' }}>.</span>
+        </h1>
+        <p className="fade-up" style={{ color: 'var(--color-fg-muted)', fontSize: 15, marginBottom: 24 }}>
+          {subtitle}
+        </p>
+        <div className="fade-up" style={{ display: 'flex', gap: 10 }}>
+          <span className="tag-pill">{items.length} {categoryId === 'daily' ? 'dates' : 'items'}</span>
+        </div>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="line-grow" style={{ height: 1, background: 'var(--color-border-warm)', marginBottom: 30 }} />
+
+      {/* Masonry Grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
         {items.map((item, index) => (
-          <motion.article 
-            key={item.id}
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: index * 0.1 }}
-            className="group"
-          >
-            <Link 
-              to={`/gallery/${categoryId}/${item.id}`} 
-              className="block bg-white/70 rounded-2xl border border-white/60 overflow-hidden hover:shadow-xl transition-all duration-500"
-            >
-              <div className="aspect-[3/4] bg-[#D1CFC7] overflow-hidden">
+          <div key={item.id} className="scale-fade" style={{ transitionDelay: `${index * 80}ms` }}>
+            <Link to={`/gallery/${categoryId}/${item.id}`} data-hover>
+              <div className="photo-card" style={{ height: [260, 220, 280, 240, 200, 260][index % 6] }}>
                 {item.coverImage ? (
-                  <img 
-                    src={item.coverImage} 
+                  <img
+                    src={item.coverImage}
                     alt={item.title}
-                    className="w-full h-full object-cover grayscale-[30%] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500"
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                    loading="lazy"
                   />
                 ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-[#D1CFC7] to-[#EBE9E1] flex items-center justify-center text-[#8C8A82]">
-                    <span className="text-4xl font-light font-serif">{item.title.charAt(0)}</span>
+                  <div style={{
+                    width: '100%',
+                    height: '100%',
+                    background: 'linear-gradient(135deg, var(--color-border-warm) 0%, var(--color-bg-linen) 100%)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'var(--color-fg-muted)',
+                    fontFamily: 'var(--font-heading)',
+                    fontSize: 32,
+                  }}>
+                    {item.title.charAt(0)}
                   </div>
                 )}
-              </div>
-              <div className="p-6">
-                <h2 className="text-2xl font-light tracking-tight mb-2 group-hover:italic transition-all duration-300 font-serif">
+                <div className="caption-overlay">
                   {item.title}
-                </h2>
-                <p className="text-xs text-[#8C8A82] mb-3">{item.date} · {item.count} photos</p>
-                {item.note && (
-                  <p className="text-sm text-[#55544E] line-clamp-2">{item.note}</p>
-                )}
+                  {item.date ? ` — ${item.date}` : ''}
+                </div>
               </div>
             </Link>
-          </motion.article>
+            <div style={{ marginTop: 8 }}>
+              <p style={{
+                fontFamily: 'var(--font-heading)',
+                fontSize: 15,
+                fontWeight: 400,
+              }}>{item.title}</p>
+              <p style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: 12,
+                color: 'var(--color-fg-muted)',
+                marginTop: 2,
+              }}>
+                {item.date} · {item.count} photos
+              </p>
+            </div>
+          </div>
         ))}
       </div>
     </div>
