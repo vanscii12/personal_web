@@ -8,7 +8,7 @@ export const metadata = {
 }
 
 export const content = `
-Lagrangian and Hamiltonian Mechanics\\\\
+Lagrangian and Hamiltonian Mechanics
 
 ## Calculus of Variations
 ### The Shortest Path
@@ -135,7 +135,7 @@ This is called Euler-Lagrange equation.
 Let's start with a 3-D system that consists of N-particles. From Newton's second law, we can write
 $$
 
-    F_i = m_i \\Ddot{r}_i = m_i \\frac{d^2 \\boldsymbol{r}_i}{dt^2}, \\quad i=1,\\dots,N
+    F_i = m_i \\ddot{r}_i = m_i \\frac{d^2 \\boldsymbol{r}_i}{dt^2}, \\quad i=1,\\dots,N
     
 
 $$
@@ -146,7 +146,7 @@ Back to Eq. eq:2-1, the important thing is to remove the vector description. To 
 Now, the D'Alembert's Principle states
 $$
 
-    \\sum_{i=1}^N (m_i \\Ddot{r}_i - F_i) \\cdot \\delta r_i = 0
+    \\sum_{i=1}^N (m_i \\ddot{r}_i - F_i) \\cdot \\delta r_i = 0
     
 
 $$
@@ -194,7 +194,7 @@ is the generalized force component. The second part of Eq. eq:2-2 can be done si
 $$
 
     \\begin{aligned}
-        \\sum_{i=1}^N m_i \\Ddot{r}_i \\cdot \\delta r_i &= \\sum_{j=1}^S\\left(\\sum_{i=1}^N m_i \\Ddot{r}_i \\cdot \\frac{\\partial r_i}{\\partial q_j}\\right)\\delta q_j
+        \\sum_{i=1}^N m_i \\ddot{r}_i \\cdot \\delta r_i &= \\sum_{j=1}^S\\left(\\sum_{i=1}^N m_i \\ddot{r}_i \\cdot \\frac{\\partial r_i}{\\partial q_j}\\right)\\delta q_j
     \\end{aligned}
 
 $$
@@ -202,7 +202,7 @@ Using the product rule of derivative,
 $$
 
     \\begin{aligned}
-        \\sum_{i=1}^N m_i \\Ddot{r}_i \\cdot \\frac{\\partial r_i}{\\partial q_j} = \\frac{d}{dt} \\left(\\sum_{i=1}^N m_i \\dot{r}_i \\cdot \\frac{\\partial r_i}{\\partial q_j}\\right) - \\sum_{i=1}^N m_i \\dot{r}_i \\cdot \\frac{d}{dt}\\left(\\frac{\\partial r_i}{\\partial q_j}\\right)
+        \\sum_{i=1}^N m_i \\ddot{r}_i \\cdot \\frac{\\partial r_i}{\\partial q_j} = \\frac{d}{dt} \\left(\\sum_{i=1}^N m_i \\dot{r}_i \\cdot \\frac{\\partial r_i}{\\partial q_j}\\right) - \\sum_{i=1}^N m_i \\dot{r}_i \\cdot \\frac{d}{dt}\\left(\\frac{\\partial r_i}{\\partial q_j}\\right)
     \\end{aligned}
 
 $$

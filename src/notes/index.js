@@ -20,7 +20,15 @@ const modules = {
         metadata: lagrangianMetadata,
         content: lagrangianContent
     },
-    "spacetime-geometry": {
+    'spacetime-geometry': {
+        metadata: spacetimeMetadata,
+        content: spacetimeContent
+    },
+    'chapter-9-review-notes': {
+        metadata: spacetimeMetadata,
+        content: spacetimeContent
+    },
+    'relativity': {
         metadata: spacetimeMetadata,
         content: spacetimeContent
     }

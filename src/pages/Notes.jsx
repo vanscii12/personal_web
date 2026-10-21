@@ -27,7 +27,7 @@ export function Notes() {
   const containerRef = useScrollAnimator()
 
   return (
-    <div ref={containerRef}>
+    <div ref={containerRef} style={{ maxWidth: 768, margin: '0 auto' }}>
       <div className="section-label fade-up" style={{ marginBottom: 4 }}>NOTES</div>
       <h1
         className="fade-up"
