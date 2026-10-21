@@ -6,29 +6,29 @@ const featuredPhotos = [
     src: '/img-webp/film/Roll1/Roll1_139107JW204636-R1-E001.webp',
     caption: 'Kamakura, temple',
     label: 'Kamakura',
-    height: 240,
-    offset: 30,
+    height: 280,
+    offset: 35,
   },
   {
     src: '/img-webp/travel/dali/1.webp',
     caption: 'Dali, old town',
     label: 'Dali',
-    height: 270,
+    height: 320,
     offset: 0,
   },
   {
     src: '/img-webp/us-daily/2021/9-23/1-1.webp',
     caption: 'Santa Barbara, daily',
     label: 'Santa Barbara',
-    height: 220,
-    offset: 50,
+    height: 260,
+    offset: 60,
   },
   {
     src: '/img-webp/film/2025-xinjiang/000158310001.webp',
     caption: 'Xinjiang, road',
     label: 'Xinjiang',
-    height: 260,
-    offset: 10,
+    height: 300,
+    offset: 15,
   },
 ]
 
@@ -64,7 +64,7 @@ export function Home() {
   const containerRef = useScrollAnimator()
 
   return (
-    <div ref={containerRef}>
+    <div ref={containerRef} style={{ maxWidth: 980, margin: '0 auto' }}>
       {/* Hero section */}
       <section style={{ marginBottom: 100 }}>
         <div className="section-label fade-up" style={{ marginBottom: 8 }}>HOME</div>
@@ -87,13 +87,20 @@ export function Home() {
         </p>
 
         {/* Staggered Photo Strip */}
-        <div style={{ display: 'flex', gap: 20, alignItems: 'flex-end', marginBottom: 50, flexWrap: 'wrap' }}>
+        <div style={{
+          display: 'flex',
+          gap: 24,
+          alignItems: 'flex-end',
+          justifyContent: 'space-between',
+          marginBottom: 50,
+          flexWrap: 'wrap'
+        }}>
           {featuredPhotos.map((photo, i) => (
             <div key={photo.label} className="scale-fade" style={{ transitionDelay: `${i * 80}ms` }}>
               <Link to="/gallery" data-hover>
                 <div
                   className="photo-card"
-                  style={{ width: 180, height: photo.height, marginTop: photo.offset }}
+                  style={{ width: 220, height: photo.height, marginTop: photo.offset }}
                 >
                   <img
                     src={photo.src}
