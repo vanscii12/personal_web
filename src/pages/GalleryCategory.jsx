@@ -72,22 +72,22 @@ export function GalleryCategory() {
       <div className="line-grow" style={{ height: 1, background: 'var(--color-border-warm)', marginBottom: 30 }} />
 
       {/* Masonry Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+      <div className="masonry-grid">
         {items.map((item, index) => (
-          <div key={item.id} className="scale-fade" style={{ transitionDelay: `${index * 80}ms` }}>
+          <div key={item.id} className="masonry-item scale-fade" style={{ transitionDelay: `${index * 80}ms` }}>
             <Link to={`/gallery/${categoryId}/${item.id}`} data-hover>
-              <div className="photo-card" style={{ height: [260, 220, 280, 240, 200, 260][index % 6] }}>
+              <div className="photo-card" style={{ position: 'relative' }}>
                 {item.coverImage ? (
                   <img
                     src={item.coverImage}
                     alt={item.title}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                    style={{ width: '100%', display: 'block' }}
                     loading="lazy"
                   />
                 ) : (
                   <div style={{
                     width: '100%',
-                    height: '100%',
+                    height: 240,
                     background: 'linear-gradient(135deg, var(--color-border-warm) 0%, var(--color-bg-linen) 100%)',
                     display: 'flex',
                     alignItems: 'center',

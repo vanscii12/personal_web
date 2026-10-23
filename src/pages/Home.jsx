@@ -6,29 +6,21 @@ const featuredPhotos = [
     src: '/img-webp/film/Roll1/Roll1_139107JW204636-R1-E001.webp',
     caption: 'Kamakura, temple',
     label: 'Kamakura',
-    height: 280,
-    offset: 35,
   },
   {
     src: '/img-webp/travel/dali/1.webp',
     caption: 'Dali, old town',
     label: 'Dali',
-    height: 320,
-    offset: 0,
   },
   {
     src: '/img-webp/us-daily/2021/9-23/1-1.webp',
     caption: 'Santa Barbara, daily',
     label: 'Santa Barbara',
-    height: 260,
-    offset: 60,
   },
   {
     src: '/img-webp/film/2025-xinjiang/000158310001.webp',
     caption: 'Xinjiang, road',
     label: 'Xinjiang',
-    height: 300,
-    offset: 15,
   },
 ]
 
@@ -86,11 +78,11 @@ export function Home() {
           Photography, field notes, and things worth remembering.
         </p>
 
-        {/* Staggered Photo Strip */}
+        {/* Photo Strip */}
         <div style={{
           display: 'flex',
           gap: 24,
-          alignItems: 'flex-end',
+          alignItems: 'flex-start',
           justifyContent: 'space-between',
           marginBottom: 50,
           flexWrap: 'wrap'
@@ -100,7 +92,7 @@ export function Home() {
               <Link to="/gallery" data-hover>
                 <div
                   className="photo-card"
-                  style={{ width: 220, height: photo.height, marginTop: photo.offset }}
+                  style={{ width: 220, height: 290 }}
                 >
                   <img
                     src={photo.src}

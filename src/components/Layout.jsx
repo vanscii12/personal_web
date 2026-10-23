@@ -21,8 +21,8 @@ export function Layout() {
     <div className="min-h-screen relative overflow-x-hidden">
       <CustomCursor />
 
-      {/* Side Navigation — vertical text labels */}
-      <nav className="side-nav fixed left-0 top-0 h-full w-12 flex flex-col justify-center items-center gap-10 z-50">
+      {/* Side Navigation — horizontal text labels stacked vertically */}
+      <nav className="side-nav fixed left-8 md:left-12 top-1/2 -translate-y-1/2 flex flex-col items-start gap-8 z-50">
         {navLinks.map((link, i) => (
           <Link
             key={link.name}
@@ -39,7 +39,7 @@ export function Layout() {
       </nav>
 
       {/* Branding — top left */}
-      <div className="fixed top-8 left-16 z-40">
+      <div className="fixed top-8 left-8 md:left-12 z-40">
         <Link
           to="/"
           data-hover
@@ -51,7 +51,7 @@ export function Layout() {
       </div>
 
       {/* Main content area */}
-      <main className="ml-[60px] min-h-screen">
+      <main className="ml-24 md:ml-32 min-h-screen">
         <AnimatePresence mode="wait">
           <motion.div
             key={location.pathname}
