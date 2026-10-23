@@ -267,7 +267,44 @@ body {
   border-color: var(--color-accent-sage);
 }
 
-/* Journal row */
+/* ====== Notes Page — note row ====== */
+.note-row {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  border-radius: 6px;
+  gap: 18px;
+  text-decoration: none;
+  color: inherit;
+  transition: background var(--duration-fast), transform var(--duration-fast) var(--ease-gentle);
+  margin-bottom: 4px;
+  position: relative;
+}
+.note-row:hover {
+  background: var(--color-accent-sage-light);
+  transform: translateX(4px);
+}
+.note-row-date {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-fg-muted);
+  min-width: 48px;
+  flex-shrink: 0;
+}
+.note-row-arrow {
+  font-size: 14px;
+  color: var(--color-accent-sage);
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity var(--duration-fast) var(--ease-gentle), transform var(--duration-fast) var(--ease-gentle);
+  flex-shrink: 0;
+}
+.note-row:hover .note-row-arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Legacy journal-row (kept for any other uses) */
 .journal-row {
   display: flex;
   align-items: center;

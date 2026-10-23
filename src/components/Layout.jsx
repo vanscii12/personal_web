@@ -5,7 +5,7 @@ import { CustomCursor } from './CustomCursor'
 
 const navLinks = [
   { name: 'archive', path: '/gallery' },
-  { name: 'journal', path: '/notes' },
+  { name: 'notes', path: '/notes' },
   { name: 'about', path: '/about' },
 ]
 
