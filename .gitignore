@@ -4,13 +4,17 @@
 node_modules/
 dist/
 .vite/
+*.timestamp-*.mjs
 
 # ===================================
 # 大体积媒体与源素材
 # ===================================
-img/
+# img/ 按路径列出，避免误伤以后源码里的同名目录
+/img/
+test/img/
 public/img-webp/
 *.zip
+*.7z
 *.tar.gz
 *.rar
 
@@ -19,6 +23,8 @@ public/img-webp/
 # ===================================
 apps/footprint/data/
 public/data/footprint/
+# 兜底：导出的 CSV 放错目录时也不会被提交
+backUpData*.csv
 
 # ===================================
 # 本地工具与 AI Agent 状态
@@ -26,6 +32,9 @@ public/data/footprint/
 .claude/
 .codegraph/
 CLAUDE.md
+design/.user_uploaded/
+design/**/*.metadata.json
+/scratch/
 
 # ===================================
 # Python 脚本缓存
@@ -38,11 +47,23 @@ venv/
 env/
 
 # ===================================
+# LaTeX / Typst 编译产物
+# ===================================
+*.aux
+*.toc
+*.out
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+/main.pdf
+test/*.pdf
+
+# ===================================
 # 环境变量与日志
 # ===================================
 .env
-.env.local
-.env.*.local
+.env.*
+!.env.example
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -57,6 +78,8 @@ Thumbs.db
 Thumbs.db:encryptable
 desktop.ini
 .idea/
+.vscode/*
+!.vscode/extensions.json
 *.suo
 *.ntvs*
 *.njsproj

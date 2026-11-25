@@ -1,5 +1,0 @@
-{
-  "summary": "Interactive HTML prototype demonstrating all the motion effects from the design proposal: page entry fade-up animations with staggered delays, scroll-triggered intersection observer animations, hover micro-interactions on photo cards and journal rows, custom cursor, and photo lightbox open/close transitions. Built as a self-contained demo with the exact color palette and typography specified in the design.",
-  "updatedAt": "2026-10-12T09:54:34.445714200Z",
-  "userFacing": true
-}
