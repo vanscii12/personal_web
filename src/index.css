@@ -968,6 +968,144 @@ body {
   }
 }
 
+/* ====== My Apps ======
+   One wide card per app: a drawn specimen beside the text, stacked on narrow screens.
+   The apps themselves run full-screen outside the layout and carry their own styles. */
+.apps-list {
+  display: grid;
+  gap: 24px;
+}
+.app-card {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  overflow: hidden;
+  border-radius: 10px;
+  background: var(--color-photo-border);
+  border: 1px solid var(--color-border-warm);
+  color: inherit;
+  text-decoration: none;
+  transition: box-shadow 0.35s var(--ease-gentle), transform 0.35s var(--ease-gentle), border-color 0.35s;
+}
+.app-card:hover,
+.app-card:focus-visible {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.07);
+  transform: translateY(-2px);
+  border-color: var(--color-accent-sage);
+}
+.app-card:focus-visible {
+  outline: 1.5px solid var(--color-accent-sage);
+  outline-offset: 4px;
+}
+.app-card-specimen {
+  position: relative;
+  min-height: 260px;
+  overflow: hidden;
+  border-right: 1px solid var(--color-border-warm);
+  background: var(--color-bg-linen);
+}
+.app-card-specimen svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s var(--ease-gentle);
+}
+.app-card:hover .app-card-specimen svg {
+  transform: scale(1.04);
+}
+.app-card-specimen-glyph {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 40px;
+  color: var(--color-accent-sage);
+}
+.app-card-body {
+  display: flex;
+  flex-direction: column;
+  padding: 28px 32px;
+}
+.app-card-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.app-card-glyph {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  color: var(--color-accent-sage);
+}
+.app-card h2 {
+  font-family: var(--font-heading);
+  font-size: 30px;
+  font-weight: 400;
+  line-height: 1.15;
+  margin-bottom: 10px;
+}
+.app-card-blurb {
+  max-width: 46ch;
+  margin-bottom: 20px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--color-fg-muted);
+}
+.app-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.app-card-tags .tag-pill {
+  padding: 3px 10px;
+  font-size: 11px;
+}
+.app-card-foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px 16px;
+  margin-top: auto;
+  padding-top: 24px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+.app-card-meta {
+  font-size: 11px;
+  color: var(--color-fg-muted);
+}
+.app-card-cta {
+  color: var(--color-accent-sage);
+}
+.app-card-cta span {
+  display: inline-block;
+  transition: transform 0.25s var(--ease-gentle);
+}
+.app-card:hover .app-card-cta span {
+  transform: translateX(4px);
+}
+
+@media (max-width: 720px) {
+  .app-card {
+    grid-template-columns: 1fr;
+  }
+  .app-card-specimen {
+    min-height: 0;
+    aspect-ratio: 16 / 10;
+    border-right: none;
+    border-bottom: 1px solid var(--color-border-warm);
+  }
+  .app-card-body {
+    padding: 22px;
+  }
+  .app-card h2 {
+    font-size: 26px;
+  }
+}
+
 /* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

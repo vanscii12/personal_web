@@ -6,6 +6,7 @@ import { CustomCursor } from './CustomCursor'
 const navLinks = [
   { name: 'archive', path: '/gallery' },
   { name: 'notes', path: '/notes' },
+  { name: 'my apps', path: '/apps' },
   { name: 'about', path: '/about' },
 ]
 

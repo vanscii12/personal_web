@@ -1,0 +1,576 @@
+/* Tokens and components follow DESIGN.md (the Personal-Web archive look): linen paper,
+   warm gray ink, sage accents, thin lines instead of shadows. Light only.
+
+   The app is a route of the site (/apps/footprint). The site's index.css stays loaded while
+   the app runs and this file stays loaded after leaving it, so every rule is nested under the
+   .footprint root element, and no class name is shared with index.css (which owns fade-up and
+   line-grow for its reveal-on-scroll; the entrance animations here are rise-in and line-in). */
+
+.footprint {
+  color-scheme: light;
+
+  --bg: #f0ebe3;
+  --surface: #f7f3ee;
+  --fg: #2c2c2c;
+  --fg-soft: #55544e;
+  --muted: #8a8378;
+  --sage: #8b9a7b;
+  --sage-light: rgba(139, 154, 123, 0.12);
+  --sage-ink: #5e6e50;
+  --border: #ddd6cc;
+  --grid: #e4ded4;
+  --pos: 63, 114, 175;
+  --neg: 194, 96, 58;
+
+  --serif: "Playfair Display", "Noto Serif SC", "Songti SC", serif;
+  --sans: Inter, "PingFang SC", "Microsoft YaHei", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+
+  --ease-gentle: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-out-soft: cubic-bezier(0, 0, 0.2, 1);
+  --duration-fast: 200ms;
+  --duration-slow: 600ms;
+  --shadow-tip: 0 8px 30px rgba(0, 0, 0, 0.06);
+
+  /* The app owns the viewport: the site's layout and navigation are not rendered around it. */
+  position: fixed;
+  inset: 0;
+  overflow: auto;
+  color: var(--fg);
+  background: var(--bg);
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.5;
+  /* The site hides the system cursor behind its own ring, which is not drawn here. */
+  cursor: auto;
+
+  & :focus-visible {
+    outline: 1.5px solid var(--sage);
+    outline-offset: 2px;
+  }
+
+  .mono {
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .muted {
+    color: var(--muted);
+  }
+
+  .app,
+  .map {
+    position: fixed;
+    inset: 0;
+  }
+
+  /* Header pieces shared by the panel and the splash */
+
+  .crumb {
+    margin: 0 0 6px;
+    color: var(--muted);
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* "← my apps": the way back into the site */
+  .crumb__back {
+    color: inherit;
+    text-decoration: none;
+    text-underline-offset: 3px;
+    transition: color var(--duration-fast) var(--ease-gentle);
+  }
+
+  .crumb__back:hover {
+    color: var(--fg);
+    text-decoration: underline;
+    text-decoration-color: var(--sage);
+  }
+
+  .title {
+    margin: 0;
+    font-family: var(--serif);
+    font-size: 32px;
+    font-weight: 400;
+    line-height: 1.15;
+    font-variant-numeric: lining-nums;
+  }
+
+  .title__dot {
+    color: var(--sage);
+  }
+
+  .subline {
+    margin: 6px 0 0;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .rule {
+    height: 1px;
+    margin: 16px 0 18px;
+    border: 0;
+    background: var(--border);
+  }
+
+  .note {
+    margin: 0;
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  .empty {
+    margin: 12px 0 0;
+    color: var(--muted);
+    font-style: italic;
+    line-height: 1.6;
+  }
+
+  .empty .mono {
+    color: var(--fg-soft);
+    font-style: normal;
+  }
+
+  .warn {
+    margin: 12px 0 0;
+    color: rgb(var(--neg));
+    font-size: 12.5px;
+  }
+
+  /* Panel */
+
+  .hud {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    z-index: 2;
+    width: min(340px, calc(100vw - 32px));
+    max-height: calc(100vh - 32px);
+    overflow: auto;
+    padding: 20px 22px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface);
+    box-shadow: var(--shadow-tip);
+  }
+
+  .hud__titlebar {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .hud__collapse {
+    padding: 0 2px;
+    border: 0;
+    background: none;
+    color: var(--sage);
+    font: 400 20px/1 var(--serif);
+    cursor: pointer;
+  }
+
+  .tiles {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px 12px;
+    margin: 0;
+  }
+
+  .tiles--three {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .tiles--three .tile__value {
+    font-size: 22px;
+  }
+
+  .lit {
+    display: grid;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .tiles__note {
+    margin-top: 12px;
+  }
+
+  .tile__label {
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  .tile__value {
+    margin: 2px 0 0;
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .tile__unit {
+    margin-left: 4px;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 0;
+  }
+
+  .controls {
+    display: grid;
+    gap: 16px;
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+  }
+
+  .field {
+    display: grid;
+    gap: 8px;
+  }
+
+  .field__name {
+    color: var(--fg-soft);
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .field__range,
+  .field__slider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .field__range .input {
+    flex: 1;
+  }
+
+  .field__slider input {
+    flex: 1;
+    height: 16px;
+    margin: 0;
+    background: transparent;
+    cursor: pointer;
+    appearance: none;
+  }
+
+  .field__slider input::-webkit-slider-runnable-track {
+    height: 2px;
+    background: var(--border);
+  }
+
+  .field__slider input::-moz-range-track {
+    height: 2px;
+    background: var(--border);
+  }
+
+  .field__slider input::-webkit-slider-thumb {
+    width: 14px;
+    height: 14px;
+    margin-top: -6px;
+    border: 2px solid var(--surface);
+    border-radius: 50%;
+    background: var(--sage);
+    box-shadow: 0 0 0 1px var(--sage);
+    appearance: none;
+  }
+
+  .field__slider input::-moz-range-thumb {
+    width: 10px;
+    height: 10px;
+    border: 2px solid var(--surface);
+    border-radius: 50%;
+    background: var(--sage);
+    box-shadow: 0 0 0 1px var(--sage);
+  }
+
+  .field__slider output {
+    min-width: 64px;
+    color: var(--fg);
+    font-size: 12.5px;
+    text-align: right;
+  }
+
+  /* Pills, inputs and calls to action */
+
+  .pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .pill {
+    padding: 4px 14px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    background: transparent;
+    color: var(--muted);
+    font: 400 12px/1.5 var(--sans);
+    cursor: pointer;
+    transition:
+      background var(--duration-fast) var(--ease-gentle),
+      color var(--duration-fast) var(--ease-gentle),
+      border-color var(--duration-fast) var(--ease-gentle);
+  }
+
+  .pill:hover,
+  .pill.is-on {
+    border-color: var(--sage);
+    background: var(--sage);
+    color: var(--surface);
+  }
+
+  .input {
+    padding: 6px 30px 6px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--bg)
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%238A8378' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+      no-repeat right 10px center;
+    color: var(--fg);
+    font-size: 13px;
+    appearance: none;
+    transition:
+      border-color var(--duration-fast) var(--ease-gentle),
+      box-shadow var(--duration-fast) var(--ease-gentle);
+  }
+
+  .input:focus {
+    border-color: var(--sage);
+    outline: none;
+    box-shadow: 0 0 0 3px var(--sage-light);
+  }
+
+  .ctas {
+    display: flex;
+    gap: 8px;
+  }
+
+  .cta {
+    flex: 1;
+    padding: 6px 14px;
+    border: 1px solid var(--fg);
+    border-radius: 20px;
+    background: transparent;
+    color: var(--fg);
+    font: 400 12px/1.5 var(--mono);
+    cursor: pointer;
+    transition:
+      background var(--duration-fast) var(--ease-gentle),
+      color var(--duration-fast) var(--ease-gentle);
+  }
+
+  .cta:hover {
+    background: var(--fg);
+    color: var(--bg);
+  }
+
+  /* Legend and tooltip: data keys are short line segments, like the trails themselves */
+
+  .key {
+    display: inline-block;
+    width: 14px;
+    height: 2px;
+    flex: none;
+    background: var(--muted);
+  }
+
+  .legend {
+    display: grid;
+    gap: 8px;
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .legend__keys {
+    display: flex;
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .legend__keys li {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--fg-soft);
+    font-size: 11.5px;
+  }
+
+  .legend__keys .key {
+    height: 3px;
+  }
+
+  /* A lit region: pale fill with the sage outline, as on the map. */
+  .key.key--region {
+    height: 10px;
+    border: 1.5px solid var(--sage);
+    background: var(--surface);
+  }
+
+  .place-tip__row .key.key--region {
+    height: 8px;
+  }
+
+  .place-tip {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 3;
+    display: grid;
+    gap: 3px;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--surface);
+    box-shadow: var(--shadow-tip);
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  .place-tip__block {
+    display: grid;
+    gap: 3px;
+  }
+
+  .place-tip__block + .place-tip__block {
+    margin-top: 4px;
+    padding-top: 6px;
+    border-top: 1px solid var(--grid);
+  }
+
+  .place-tip__title {
+    color: var(--fg);
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .place-tip__title span {
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  .place-tip__date,
+  .place-tip__note {
+    color: var(--muted);
+    font: 400 11px/1.5 var(--mono);
+  }
+
+  .place-tip__row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+  }
+
+  .place-tip__row .key {
+    width: 12px;
+  }
+
+  .place-tip__row b {
+    min-width: 40px;
+    font: 600 12px/1.5 var(--mono);
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+
+  .place-tip__row span {
+    color: var(--fg-soft);
+  }
+
+  /* Loading and empty states */
+
+  .splash {
+    display: grid;
+    min-height: 100vh;
+    place-items: center;
+    padding: 16px;
+  }
+
+  .splash__card {
+    width: min(440px, 100%);
+    padding: 24px 26px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface);
+  }
+
+  /* MapLibre controls */
+
+  .maplibregl-ctrl-group:not(:empty) {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--surface);
+    box-shadow: none;
+  }
+
+  .maplibregl-ctrl-group button + button {
+    border-top: 1px solid var(--border);
+  }
+
+  .maplibregl-ctrl-attrib.maplibregl-compact {
+    background: var(--surface);
+    color: var(--muted);
+  }
+
+  /* Motion: entrance only, never on redraws */
+
+  .rise-in {
+    animation: footprint-rise var(--duration-slow) var(--ease-out-soft) both;
+  }
+
+  .line-in {
+    animation: footprint-line var(--duration-slow) var(--ease-out-soft) 150ms both;
+    transform-origin: left;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    & *,
+    & *::before,
+    & *::after {
+      animation-duration: 0.01ms !important;
+      animation-delay: 0ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  @media (max-width: 760px) {
+    /* Leave the zoom buttons in the top-right corner uncovered. */
+    .hud {
+      top: 12px;
+      left: 12px;
+      width: calc(100vw - 72px);
+      max-height: calc(100vh - 24px);
+      padding: 16px 14px;
+    }
+
+    .title {
+      font-size: 28px;
+    }
+
+    .tile__value {
+      font-size: 22px;
+    }
+  }
+}
+
+/* Keyframes cannot be nested, so their names carry the app's prefix instead. */
+
+@keyframes footprint-rise {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+
+@keyframes footprint-line {
+  from {
+    transform: scaleX(0);
+  }
+}
