@@ -6,6 +6,7 @@ import { GalleryCategory } from './pages/GalleryCategory'
 import { GalleryDetail } from './pages/GalleryDetail'
 import { Notes } from './pages/Notes'
 import { NotesDetail } from './pages/NotesDetail'
+import { About } from './pages/About'
 
 export default function App() {
   return (
@@ -17,6 +18,7 @@ export default function App() {
         <Route path="gallery/:categoryId/:itemId" element={<GalleryDetail />} />
         <Route path="notes" element={<Notes />} />
         <Route path="notes/:noteId" element={<NotesDetail />} />
+        <Route path="about" element={<About />} />
       </Route>
     </Routes>
   )

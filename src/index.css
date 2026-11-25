@@ -632,6 +632,342 @@ body {
   }
 }
 
+/* ====== About Page ====== */
+.about-hairline {
+  height: 1px;
+  background: var(--color-border-warm);
+}
+.about-h2 {
+  font-family: var(--font-heading);
+  font-size: 26px;
+  font-weight: 400;
+  line-height: 1.25;
+}
+
+/* Introduction — text column beside a portrait photograph */
+.about-intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  column-gap: 72px;
+  align-items: start;
+  margin-bottom: 80px;
+}
+.about-lede {
+  font-family: var(--font-heading);
+  font-size: 27px;
+  line-height: 1.4;
+  font-weight: 400;
+  margin-bottom: 32px;
+}
+.about-body p {
+  font-size: 15px;
+  line-height: 1.85;
+  max-width: 54ch;
+  margin-bottom: 18px;
+}
+.about-quote {
+  margin: 34px 0 38px;
+  padding-left: 20px;
+  border-left: 1px solid var(--color-accent-sage);
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-size: 19px;
+  line-height: 1.55;
+  max-width: 44ch;
+}
+.about-facts {
+  border-top: 1px solid var(--color-border-warm);
+}
+.about-fact {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  column-gap: 16px;
+  align-items: baseline;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--color-border-warm);
+}
+.about-fact dt {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-fg-muted);
+}
+.about-fact dd {
+  font-size: 14px;
+  line-height: 1.6;
+}
+/* The spaces around the dot are real, so long lists can wrap between values */
+.about-sep {
+  margin: 0 0.15em;
+  color: var(--color-accent-sage);
+}
+
+.about-portrait {
+  margin: 0;
+}
+.about-portrait-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+.about-portrait .photo-card {
+  aspect-ratio: 2 / 3;
+}
+.about-portrait .photo-card img,
+.about-portrait .about-frame-missing {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.about-portrait-caption {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: 10px;
+  font-family: var(--font-heading);
+  font-size: 13px;
+  color: var(--color-fg-muted);
+}
+.about-frame-no {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--color-accent-sage);
+}
+.about-frame-missing {
+  background: linear-gradient(135deg, var(--color-border-warm) 0%, var(--color-bg-linen) 100%);
+}
+
+/* The archive in numbers */
+.about-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.about-stat {
+  padding: 30px 0 28px 32px;
+  border-left: 1px solid var(--color-border-warm);
+}
+.about-stat:first-child {
+  padding-left: 0;
+  border-left: none;
+}
+.about-stat-num {
+  font-family: var(--font-heading);
+  font-size: 54px;
+  line-height: 1;
+  font-weight: 400;
+  font-variant-numeric: lining-nums;
+  margin-bottom: 14px;
+}
+.about-stat-caption {
+  margin-top: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-fg-muted);
+}
+
+/* Practice — two panels linking into the archive and the notes */
+.about-practice {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+.about-practice > div {
+  display: flex;
+}
+.about-panel {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 28px;
+  border-radius: 10px;
+  background: var(--color-photo-border);
+  border: 1px solid var(--color-border-warm);
+  color: inherit;
+  text-decoration: none;
+  transition: box-shadow 0.35s var(--ease-gentle), transform 0.35s var(--ease-gentle), border-color 0.35s;
+}
+.about-panel:hover,
+.about-panel:focus-visible {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.07);
+  transform: translateY(-2px);
+  border-color: var(--color-accent-sage);
+}
+.about-panel-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.about-panel-glyph {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  color: var(--color-accent-sage);
+}
+.about-panel h3 {
+  font-family: var(--font-heading);
+  font-size: 24px;
+  font-weight: 400;
+  margin-bottom: 8px;
+}
+.about-panel p {
+  max-width: 40ch;
+  margin-bottom: 24px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--color-fg-muted);
+}
+.about-specimen {
+  margin-top: auto;
+}
+.about-panel-cta {
+  margin-top: 22px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-accent-sage);
+}
+.about-panel-cta span {
+  display: inline-block;
+  transition: transform 0.25s var(--ease-gentle);
+}
+.about-panel:hover .about-panel-cta span {
+  transform: translateX(4px);
+}
+
+.about-frames {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+.about-frame {
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: 4px;
+  border: 1px solid var(--color-border-warm);
+  background: var(--color-border-warm);
+}
+.about-frame img,
+.about-frame .about-frame-missing {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.about-frame img {
+  transition: transform 0.6s var(--ease-gentle);
+}
+.about-panel:hover .about-frame img {
+  transform: scale(1.05);
+}
+
+.about-equations {
+  border-top: 1px solid var(--color-border-warm);
+}
+.about-equations li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  column-gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--color-border-warm);
+}
+.about-eq {
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-size: 19px;
+}
+.about-eq-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-fg-muted);
+}
+
+/* Colophon */
+.about-colophon {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 32px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.7;
+  color: var(--color-fg-muted);
+}
+
+.about-panel:focus-visible,
+.about-portrait-link:focus-visible,
+.about-link:focus-visible {
+  outline: 1.5px solid var(--color-accent-sage);
+  outline-offset: 4px;
+}
+
+@media (max-width: 860px) {
+  /* Stack: lede, photograph, then the rest of the text */
+  .about-intro {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    margin-bottom: 64px;
+  }
+  .about-intro-text {
+    display: contents;
+  }
+  .about-lede {
+    order: 1;
+    margin-bottom: 0;
+  }
+  .about-portrait {
+    order: 2;
+    width: 100%;
+    max-width: 300px;
+  }
+  .about-body {
+    order: 3;
+  }
+}
+@media (max-width: 720px) {
+  .about-practice {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 640px) {
+  .about-lede {
+    font-size: 22px;
+  }
+  .about-fact {
+    grid-template-columns: 1fr;
+    row-gap: 2px;
+  }
+  .about-stats {
+    grid-template-columns: 1fr;
+  }
+  .about-stat {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: 16px;
+    padding: 22px 0;
+    border-left: none;
+    border-top: 1px solid var(--color-border-warm);
+  }
+  .about-stat:first-child {
+    border-top: none;
+  }
+  .about-stat-num {
+    min-width: 72px;
+    margin-bottom: 0;
+    font-size: 40px;
+  }
+  .about-stat-caption {
+    flex-basis: 100%;
+    margin-top: 4px;
+  }
+  .about-panel {
+    padding: 22px;
+  }
+}
+
 /* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
