@@ -390,6 +390,248 @@ body {
   color: var(--color-fg-muted);
 }
 
+/* ====== Daily Timeline ====== */
+.tl-container {
+  position: relative;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Central vertical spine */
+.tl-spine {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--color-border-warm);
+  transform: translateX(-50%);
+}
+
+/* Year label — centered on spine */
+.tl-year-group {
+  position: relative;
+}
+.tl-year-label {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 40px;
+  margin-top: 24px;
+}
+.tl-year-label:first-child {
+  margin-top: 0;
+}
+.tl-year-label span {
+  display: inline-block;
+  padding: 6px 22px;
+  border-radius: 20px;
+  border: 1px solid var(--color-border-warm);
+  background: var(--color-bg-linen);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 2px;
+  color: var(--color-fg-muted);
+}
+
+/* Single entry row — provides the alternating layout */
+.tl-entry {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 48px;
+}
+.tl-entry-left {
+  flex-direction: row;
+  justify-content: flex-end;
+  padding-right: calc(50% + 32px);
+}
+.tl-entry-right {
+  flex-direction: row;
+  justify-content: flex-start;
+  padding-left: calc(50% + 32px);
+}
+
+/* Node (dot + date badge) — sits on the spine */
+.tl-node {
+  position: absolute;
+  left: 50%;
+  top: 18px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 0.5s var(--ease-out-soft);
+}
+.tl-node.visible {
+  opacity: 1;
+}
+.tl-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color-bg-linen);
+  border: 2px solid var(--color-accent-sage);
+  transition: background 0.3s, transform 0.3s var(--ease-gentle);
+}
+.tl-entry:hover .tl-dot {
+  background: var(--color-accent-sage);
+  transform: scale(1.3);
+}
+.tl-date-badge {
+  margin-top: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-fg-muted);
+  white-space: nowrap;
+}
+
+/* Card */
+.tl-card {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--color-photo-border);
+  border: 1px solid var(--color-border-warm);
+  transition: transform 0.35s var(--ease-gentle), box-shadow 0.35s var(--ease-gentle), border-color 0.3s;
+  max-width: 340px;
+  width: 100%;
+  /* scroll reveal */
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s var(--ease-out-soft), transform 0.6s var(--ease-out-soft), box-shadow 0.35s var(--ease-gentle), border-color 0.3s;
+}
+.tl-card-left {
+  transform: translateX(-20px) translateY(0);
+}
+.tl-card-right {
+  transform: translateX(20px) translateY(0);
+}
+.tl-card.visible {
+  opacity: 1;
+  transform: translateX(0) translateY(0);
+}
+.tl-card:hover {
+  border-color: var(--color-accent-sage);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+  transform: translateY(-3px);
+}
+
+/* Arrow connector pointing toward spine */
+.tl-card-arrow {
+  position: absolute;
+  top: 22px;
+  width: 12px;
+  height: 12px;
+  background: var(--color-photo-border);
+  border: 1px solid var(--color-border-warm);
+  transform: rotate(45deg);
+  transition: border-color 0.3s;
+}
+.tl-card-left .tl-card-arrow {
+  right: -7px;
+  border-left: none;
+  border-bottom: none;
+}
+.tl-card-right .tl-card-arrow {
+  left: -7px;
+  border-right: none;
+  border-top: none;
+}
+.tl-card:hover .tl-card-arrow {
+  border-color: var(--color-accent-sage);
+}
+
+.tl-card-image img {
+  width: 100%;
+  height: auto;
+  max-height: 220px;
+  object-fit: cover;
+  display: block;
+}
+.tl-card-placeholder {
+  width: 100%;
+  height: 160px;
+  background: linear-gradient(135deg, var(--color-border-warm) 0%, var(--color-bg-linen) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-fg-muted);
+  font-family: var(--font-heading);
+  font-size: 32px;
+}
+.tl-card-body {
+  padding: 14px 16px;
+}
+.tl-card-title {
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 400;
+  margin-bottom: 2px;
+}
+.tl-card-meta {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-fg-muted);
+}
+.tl-card-note {
+  font-size: 13px;
+  color: var(--color-fg-muted);
+  margin-top: 6px;
+  line-height: 1.5;
+}
+
+/* End cap dot */
+.tl-end-cap {
+  display: flex;
+  justify-content: center;
+  padding: 8px 0 24px;
+}
+.tl-end-cap .tl-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--color-accent-sage);
+  border: none;
+}
+
+/* ---- Mobile: single-column timeline ---- */
+@media (max-width: 700px) {
+  .tl-spine {
+    left: 20px;
+  }
+  .tl-entry-left,
+  .tl-entry-right {
+    padding-left: 52px;
+    padding-right: 0;
+    justify-content: flex-start;
+  }
+  .tl-node {
+    left: 20px;
+  }
+  /* All arrows point left on mobile */
+  .tl-card-left .tl-card-arrow,
+  .tl-card-right .tl-card-arrow {
+    left: -7px;
+    right: auto;
+    border-right: none;
+    border-top: none;
+    border-left: 1px solid var(--color-border-warm);
+    border-bottom: 1px solid var(--color-border-warm);
+  }
+  .tl-card-left,
+  .tl-card-right {
+    max-width: 100%;
+  }
+  .tl-year-label {
+    justify-content: flex-start;
+    padding-left: 52px;
+  }
+}
+
 /* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

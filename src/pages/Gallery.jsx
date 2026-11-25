@@ -171,13 +171,19 @@ export function Gallery() {
             marginBottom: 8,
           }}>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 12 }}>
-              <h2 style={{
-                fontFamily: 'var(--font-heading)',
-                fontSize: 24,
-                fontWeight: 400,
-              }}>
-                {cat.title}
-              </h2>
+              <Link
+                to={`/gallery/${cat.id}`}
+                data-hover
+                style={{ textDecoration: 'none', color: 'inherit' }}
+              >
+                <h2 style={{
+                  fontFamily: 'var(--font-heading)',
+                  fontSize: 24,
+                  fontWeight: 400,
+                }}>
+                  {cat.title}
+                </h2>
+              </Link>
               <span style={{
                 fontFamily: 'var(--font-mono)',
                 fontSize: 12,

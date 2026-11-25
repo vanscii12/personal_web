@@ -1,6 +1,7 @@
 import { useParams, Link } from 'react-router'
 import { useEffect, useRef } from 'react'
 import { getCategoryData } from '../gallery'
+import { DailyTimeline } from '../components/DailyTimeline'
 
 function useScrollAnimator() {
   const containerRef = useRef(null)
@@ -71,58 +72,63 @@ export function GalleryCategory() {
 
       <div className="line-grow" style={{ height: 1, background: 'var(--color-border-warm)', marginBottom: 30 }} />
 
-      {/* Masonry Grid */}
-      <div className="masonry-grid">
-        {items.map((item, index) => (
-          <div key={item.id} className="masonry-item scale-fade" style={{ transitionDelay: `${index * 80}ms` }}>
-            <Link to={`/gallery/${categoryId}/${item.id}`} data-hover>
-              <div className="photo-card" style={{ position: 'relative' }}>
-                {item.coverImage ? (
-                  <img
-                    src={item.coverImage}
-                    alt={item.title}
-                    style={{ width: '100%', display: 'block' }}
-                    loading="lazy"
-                  />
-                ) : (
-                  <div style={{
-                    width: '100%',
-                    height: 240,
-                    background: 'linear-gradient(135deg, var(--color-border-warm) 0%, var(--color-bg-linen) 100%)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: 'var(--color-fg-muted)',
-                    fontFamily: 'var(--font-heading)',
-                    fontSize: 32,
-                  }}>
-                    {item.title.charAt(0)}
+      {categoryId === 'daily' ? (
+        /* Vertical scrolling timeline for daily archive */
+        <DailyTimeline items={items} />
+      ) : (
+        /* Masonry Grid for other categories */
+        <div className="masonry-grid">
+          {items.map((item, index) => (
+            <div key={item.id} className="masonry-item scale-fade" style={{ transitionDelay: `${index * 80}ms` }}>
+              <Link to={`/gallery/${categoryId}/${item.id}`} data-hover>
+                <div className="photo-card" style={{ position: 'relative' }}>
+                  {item.coverImage ? (
+                    <img
+                      src={item.coverImage}
+                      alt={item.title}
+                      style={{ width: '100%', display: 'block' }}
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div style={{
+                      width: '100%',
+                      height: 240,
+                      background: 'linear-gradient(135deg, var(--color-border-warm) 0%, var(--color-bg-linen) 100%)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: 'var(--color-fg-muted)',
+                      fontFamily: 'var(--font-heading)',
+                      fontSize: 32,
+                    }}>
+                      {item.title.charAt(0)}
+                    </div>
+                  )}
+                  <div className="caption-overlay">
+                    {item.title}
+                    {item.date ? ` — ${item.date}` : ''}
                   </div>
-                )}
-                <div className="caption-overlay">
-                  {item.title}
-                  {item.date ? ` — ${item.date}` : ''}
                 </div>
+              </Link>
+              <div style={{ marginTop: 8 }}>
+                <p style={{
+                  fontFamily: 'var(--font-heading)',
+                  fontSize: 15,
+                  fontWeight: 400,
+                }}>{item.title}</p>
+                <p style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: 12,
+                  color: 'var(--color-fg-muted)',
+                  marginTop: 2,
+                }}>
+                  {item.date} · {item.count} photos
+                </p>
               </div>
-            </Link>
-            <div style={{ marginTop: 8 }}>
-              <p style={{
-                fontFamily: 'var(--font-heading)',
-                fontSize: 15,
-                fontWeight: 400,
-              }}>{item.title}</p>
-              <p style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: 12,
-                color: 'var(--color-fg-muted)',
-                marginTop: 2,
-              }}>
-                {item.date} · {item.count} photos
-              </p>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
