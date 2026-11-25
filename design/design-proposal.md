@@ -49,6 +49,36 @@ Notes/journal entries use a **date | title | tag** horizontal row structure — 
 ### 5. "Now" Section
 A minimal footer line: *"currently — reading Borges, editing rolls from Hokkaido"* — replacing the "Currently" card with a quieter single-line treatment.
 
+### 6. About Page
+
+The proposal named the page but never drew it. It reuses the grammar of Notes and Photo Rolls (eyebrow label, serif title with a sage full stop, growing hairline) and is built around one idea taken from the homepage line *"collected light, scattered thoughts"*: **light appears on both sides of the site** — as exposure in the photographs, as electromagnetism in the notes.
+
+| Section | Content | Treatment |
+|---------|---------|-----------|
+| Header | `ABOUT → VANSCII`, **About.**, tagline | Same as every other page header |
+| Introduction | Serif lede with sage keywords, two short paragraphs, a pull-quote, a definition list of plain facts | Left column; body copy capped at 54ch |
+| Portrait | One archive photograph (2:3) in a cream frame, caption and a film-edge frame number (`▸ 21`) | Right column, 300px; links to the roll it came from, hover reveals "View the roll →" |
+| The archive in numbers | Photographs · rolls · notes | Three columns of large serif numerals with mono captions, divided by hairlines; computed from the gallery and notes data |
+| Practice | *"Two ways of keeping light."* — a Photographs panel (three covers) and a Notes panel (three equations) | Two cream cards; hover lifts 2px and draws a sage border; each links into its half of the site |
+| Elsewhere | Contact links as `note-row`s | Only rendered when links are configured |
+| Colophon | Typefaces, stack, © line | Mono 11px, muted |
+
+**Motion** — Same vocabulary and timings as the rest of the site: header and paragraphs fade up (600ms, 80ms stagger), fact rows slide in from the left (60ms stagger), the portrait and panels scale-fade in, hairlines grow from 0% to 100%. Nothing bounces.
+
+**Responsive** — Above 860px: text column plus a 300px portrait. At 860px and below: a single column ordered lede → photograph → text. At 720px the panels stack; at 640px the numbers become rows and fact labels sit above their values.
+
+### 7. My Apps Page
+
+A shelf of small apps that run inside the site (`my apps` in the side nav). The page keeps the usual header — `ARCHIVE → APPS`, **My Apps.**, a count with a one-line tagline, the growing hairline — then one wide card per app, so a single app doesn't look stranded in a grid.
+
+| Part | Content | Treatment |
+|------|---------|-----------|
+| Specimen | A drawing of what the app shows, in the app's own colours (Footprint: invented routes clearing the fog, a lit region, trails darkening with passes) — never a screenshot of real data | Left 5/11 of the card on linen; zooms to 1.04 on hover, like the About frames |
+| Text | Glyph and eyebrow (`⌖ PERSONAL MAP`), serif name, muted blurb capped at 46ch, stack as small tag pills | Right side of the cream card |
+| Foot | Mono meta line (`opens full-screen · interface in Chinese`) and a sage `enter →` | Arrow nudges 4px on hover; the card lifts 2px and takes the sage border, as the About panels do |
+
+Entering an app leaves the site chrome behind: the app owns the viewport, and its own panel carries a `← MY APPS` crumb back. At 720px and below the specimen moves above the text at 16:10.
+
 ---
 
 ## 🎬 Motion & Interaction Design
